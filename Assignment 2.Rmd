@@ -1,0 +1,58 @@
+---
+title: "Assignment 2"
+author: "Michael Manigault"
+date: "9/2/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+directory <- "C:/Users/Mike Manigault Jr/Desktop/"
+setwd(directory)
+library(foreign)
+
+```
+
+
+
+```{r}
+head(GSS$sex)
+```
+```{r}
+GSS <- read.dta("C:/Users/Mike Manigault Jr/Desktop/GSS1972_2014v12.dta")
+library(descr)
+freq(GSS$race)
+
+table(GSS$race)
+prop.table(table(GSS$race))
+
+library(lattice)
+histogram(GSS$race)
+```
+
+
+
+
+
+
+```{r pressure, echo=FALSE}
+GSS <- read.dta("C:/Users/Mike Manigault Jr/Desktop/GSS1972_2014v12.dta")
+library(descr)
+freq(GSS$sex)
+
+table(GSS$sex)
+prop.table(table(GSS$sex))
+
+library(lattice)
+histogram(GSS$sex)
+```
+
