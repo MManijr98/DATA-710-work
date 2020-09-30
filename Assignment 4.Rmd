@@ -1,0 +1,65 @@
+---
+title: "Assignment 4"
+author: "Michael Manigault"
+date: "9/16/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+rm(list=ls())
+gc()
+directory <- "C:/Users/Mike Jr/Desktop/"
+setwd(directory)
+library(haven)
+library(tidyverse)
+library(magrittr)
+library(foreign)
+library(descr)
+install.packages("expss")
+install.packages("gmodels")
+GSS <- read.dta("C:/Users/Mike Jr/Desktop/GSS1972_2014v12.dta")
+```
+
+
+
+```{r}
+GSS$happy <-ifelse(GSS$happy == "dk", NA, GSS$happy)
+GSS$marital <-ifelse(GSS$marital == "na", NA, GSS$marital)
+GSS$educ <- cut(GSS$educ, c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
+GSS$educ <- cut(GSS$educ, c(12))
+GSS$educ <- cut(GSS$educ, c(13, 14, 15, 16, 17, 18, 19, 20))
+
+```
+
+
+
+```{r}
+table(GSS$race, GSS$sex)
+table(GSS$sex, GSS$race)
+```
+```{r}
+prop.table(table(GSS$educ))
+```
+
+```{r}
+prop.table(table(GSS$educ, GSS$gunlaw))
+
+prop.table(table(GSS$educ, GSS$gunlaw), 1)
+chisq.test(GSS$educ, GSS$gunlaw)
+
+prop.table(table(GSS$marital, GSS$happy), 2)
+chisq.test(GSS$marital, GSS$happy)
+```
+
+
+```{r}
+library(expss)
+library(gmodels)
+CrossTable(GSS$educ, GSS$abany, prop.r = T, chisq = T, dnn=c ("Highest Level of Education", "Gun Control"))
+```
+
