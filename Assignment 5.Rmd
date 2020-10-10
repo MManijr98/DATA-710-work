@@ -1,0 +1,98 @@
+---
+title: "Assignment 5"
+author: "Michael Manigault"
+date: "9/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+rm(list=ls())
+gc()
+directory <- "C:/Users/Mike Jr/Downloads/"
+setwd(directory)
+library(tidyverse)
+library(magrittr)
+library(haven)
+library(foreign)
+library(sjmisc)
+library(expss)
+library(gmodels)
+library(dplyr)
+install.packages("gmodels")
+install.packages("magrittr")
+install.packages("dplyr")
+install.packages("Hmisc")
+install.packages("car")
+
+WLS_educ <- read_dta("C:/Users/Mike Jr/Downloads/WLS_educ.dta")
+WLS_health <- read_dta("C:/Users/Mike Jr/Downloads/WLS_health.dta")
+
+glimpse(WLS_educ)
+glimpse(WLS_health)
+
+WLS<-cbind(WLS_educ, WLS_health) %>%
+  select(brdxdy, sexrsp, spouse_edu, resp_edu, health)
+glimpse(WLS)
+```
+
+```{r}
+WLS <- WLS %>%
+  mutate (
+    r_edu = case_when(
+      resp_edu ==12 ~ "1 HS or Less",
+      resp_edu >= 13 & resp_edu <16 ~ "2 Some College",
+      resp_edu >=16 & resp_edu ~ "3 BA or more"),
+    sp_edu = case_when (
+      spouse_edu == 12 ~ "1 HS or Less",
+      spouse_edu >=13 & spouse_edu < 16 ~ "2 Some College",
+      spouse_edu >=16 ~ "3 BA or more"))
+
+
+table(WLS$r_edu, WLS$sp_edu)
+
+prop.table(table(WLS$r_edu, WLS$sp_edu), 1)
+chisq.test(WLS$r_edu, WLS$sp_edu)
+
+CrossTable(WLS$r_edu, WLS$sp_edu, prop.r = T, chisq = T, dnn=c ("Respondent's Education", "Spouse's Education"))
+    
+```
+
+```{r}
+
+(WLS <- WLS %>% 
+  mutate (
+    homogamous = ifelse(resp_edu == spouse_edu, 1, 0),
+    hypergamous = ifelse(sexrsp ==1 & resp_edu > spouse_edu, 1, 0),
+    hypogamous = ifelse(sexrsp ==2 & resp_edu > spouse_edu, 1, 0),
+    marriage_type = case_when(
+      resp_edu == spouse_edu ~ "Homogamous",
+      sexrsp == 1 & resp_edu > spouse_edu ~ "Hypergamous",
+      sexrsp == 2 & resp_edu > spouse_edu ~ "Hypogamous"
+    )))
+freq(WLS$marriage_type)
+freq(WLS$homogamous)
+freq(WLS$hypergamous)
+freq(WLS$hypogamous)
+table(WLS$marriage_type, WLS$homogamous)
+table(WLS$marriage_type, WLS$hypergamous)
+table(WLS$marriage_type, WLS$hypogamous)
+```
+```{r}
+library(Hmisc)
+correlate <- data.frame(GSS$paeduc, GSS$educ, GSS$prestg10, GSS$papres10, GSS$age)
+correlate2 <- rcorr(as.matrix(correlate))
+correlate2
+```
+```{r}
+library(car)
+scatterplot(GSS$paeduc, GSS$educ, reg.line= TRUE, xlab= "Father's years of education", ylab= "Respondent's years of education", main= "Enchanced Scatter Plot")
+```
+
+
+
