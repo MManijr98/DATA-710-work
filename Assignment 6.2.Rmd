@@ -1,0 +1,80 @@
+---
+title: "Assignment 6.2"
+author: "Michael Manigault"
+date: "10/21/2020"
+output: html_document
+---
+
+```{r}
+rm(list=ls())
+gc()
+directory <- "C:/Users/Mike Jr/Downloads/"
+library(tidyverse)
+library(magrittr)
+library(haven)
+library(foreign)
+library(dplyr)
+install.packages("magrittr")
+install.packages("dplyr")
+```
+
+
+```{r}
+GSS1 <- read_dta("C:/Users/Mike Jr/Downloads/school1.dta")
+GSS2 <- read_dta("C:/Users/Mike Jr/Downloads/school2.dta")
+GSS3 <- read_dta("C:/Users/Mike Jr/Downloads/childoutcomes1.dta")
+summary(GSS1$race)
+frequency(GSS1$race)
+hist(GSS1$race)
+```
+
+
+```{r}
+id<-c(0001009,	
+0002010,0002018,	
+0005005)
+race<-c( "White", "White", "White", "White")
+WKSESL<-c(-0.21, -0.24, -0.23, -0.54)
+data1 <- data.frame(id, race, WKSESL)
+data1
+```
+```{r}
+id<-c(0001009,	
+0002010,0002018,	
+0005005)
+reading<-c(32.49,32.05, 38.71,35.25)
+math4<-c(29.09,23.57,46.53,46.53)
+data2 <- data.frame(id, math4, reading)
+data2
+```
+
+
+```{r}
+final <-merge(school2, childoutcomes1, by="CHILDID", all="TRUE")
+final
+```
+
+```{r}
+one.way <- aov(math ~ race, data = final)
+summary(one.way)
+```
+```{r}
+one.way <- aov(reading ~ race, data = final)
+summary(one.way)
+```
+```{r}
+one.way <- aov(math ~ WKSESL, data = final)
+summary(one.way)
+```
+```{r}
+one.way <- aov(reading ~ WKSESL, data = final)
+summary(one.way)
+```
+
+```{r}
+aggregate(x = final$reading, 
+          by = list(final$race), 
+          FUN = mean, 
+          na.rm=TRUE)
+```
+
